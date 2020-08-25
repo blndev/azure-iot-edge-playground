@@ -33,8 +33,8 @@ resource "azurerm_resource_group" "rg" {
 }
 
 
-
-resource "azurerm_iothub" "example" {
+# Create IoT Hub
+resource "azurerm_iothub" "iothub" {
   name                = "${lower(local.deploymentname)}-iothub"
   resource_group_name = azurerm_resource_group.rg.name
   location            = var.location
@@ -46,7 +46,32 @@ resource "azurerm_iothub" "example" {
   }
 }
 
+resource  "azurerm_iothub_shared_access_policy" "iothubowner" {
+  #name         = azurerm_iothub.iothub.name
+  name                = "${lower(local.deploymentname)}-sap-iothubowner"
+  resource_group_name = azurerm_resource_group.rg.name
+  iothub_name         = azurerm_iothub.iothub.name
 
-resource "azurerm_iothub" "hub1" {
-  # (resource arguments)
+  registry_read  = true
+  registry_write = true
+  service_connect = true
+  device_connect = true
+}
+
+# Create Device Provisioning Service
+resource "azurerm_iothub_dps" "dps" {
+  name                = "${lower(local.deploymentname)}-dps"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = var.location
+  tags                = local.default_tags
+
+  sku {
+    name     = "S1"
+    capacity = 1
+  }
+
+  linked_hub {
+    connection_string = azurerm_iothub_shared_access_policy.iothubowner.primary_connection_string
+    location            = var.location
+  }
 }
