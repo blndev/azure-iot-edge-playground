@@ -1,0 +1,41 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  os = "bento/ubuntu-18.04"
+  net_ip = "192.168.50"
+
+  # import the box once and then create references for all other instaces
+  #config.linked_clone = true
+
+  [
+    ["iot-edge-1",  "#{net_ip}.11", "1024", os ],
+    ["iot-edge-2", "#{net_ip}.12", "1024", os ],
+    ["iot-edge-3", "#{net_ip}.13", "512", os ],
+    ["iot-edge-4", "#{net_ip}.14", "512", os ],
+  ].each do |vmname,ip,mem,os|
+    config.vm.define "#{vmname}" do |minion_config|
+      minion_config.vm.provider "virtualbox" do |vb|
+          vb.linked_clone = true
+          vb.memory = "#{mem}"
+          vb.cpus = 1
+          vb.name = "#{vmname}"
+          #fix ubuntu network issue https://stackoverflow.com/questions/18457306/how-to-enable-internet-access-inside-vagrant
+          vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+          vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]          
+      end
+
+      minion_config.vm.box = "#{os}"
+      minion_config.vm.hostname = "#{vmname}"
+      #minion_config.vm.network "private_network", ip: "#{ip}"
+      # fix for salt /bin/sh vs. /usr/bin/sh issue
+      minion_config.vm.provision "shell",
+        inline: "ln -sf /bin/sh /usr/bin/sh"
+
+      end
+    end
+  end
+#end
