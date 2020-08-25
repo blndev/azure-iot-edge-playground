@@ -8,7 +8,7 @@ variable "location" {
 }
 variable "deploymentprefix" { 
     description = "A Shortname which is placed before every ressource created at azure. E.g template-vm-master-01"
-    default = "Template" 
+    default = "iotedge" 
 }
 
 variable "sshUser" {
@@ -71,5 +71,6 @@ default_tags = {
     Architecture        = "${local.architecture}"
     Deployment          = "${local.deploymentname}"
     Info                = "${var.tagDescription}"
+    Provider            = "Terraform"
   } 
 } 
