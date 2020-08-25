@@ -65,5 +65,6 @@ If so, then you will use all of your in the past collected data.
 terraform init  # download all required modules
 terraform plan  # check credentials and configuration
 terraform apply # install or upgrade solution
+# or - terrafrom apply --auto-approve
 ----
 
