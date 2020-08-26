@@ -10,21 +10,9 @@ provider "azurerm" {
 #   ----------------------------------------------------------------------------
 
 locals {
-  architecture = "0.1"
+  architecture = "1.0"
   status = "development"
 }
-
-## Snippet to Manage Tags 
-# tags = "${merge(map( 
-#     "newtag", "newtagvalue"
-#     ), 
-#     local.default_tags 
-# )}" 
-
-
-#   ----------------------------------------------------------------------------
-#   Resourcegroups
-#   ----------------------------------------------------------------------------
 
 resource "azurerm_resource_group" "rg" {
   name     = local.deploymentname
@@ -81,12 +69,25 @@ resource "azurerm_iothub_dps" "dps" {
   }
 }
 
+# Details: https://docs.microsoft.com/en-us/cli/azure/ext/azure-iot/iot/dps/enrollment-group?view=azure-cli-latest#ext-azure-iot-az-iot-dps-enrollment-group-create
+# Attention: (Aug/2020) requires still the az cli iot edge extensions, see readme - install section
 resource "null_resource" "create-dps-symkey" {
   provisioner "local-exec" {
     command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"symetric-key-demo\" --edge-enabled true --primary-key ${random_id.primarysecret.hex}  --secondary-key ${random_id.secondarysecret.hex}"
   }
   depends_on = [azurerm_iothub_dps.dps]
 }
+
+# This will generate a temporary ca and certificates for our Edges
+resource "null_resource" "generate-certificates" {
+  provisioner "local-exec" {
+    command = "bash ./generate_certificates.sh"
+  }
+  # triggers = {
+  #   always_run = "${timestamp()}"
+  # }
+}
+
 #
 # resource "azurerm_iothub_dps_certificate" "example" {
 #   name                = "example"

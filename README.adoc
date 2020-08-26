@@ -5,11 +5,14 @@ Azure IoT Edge - Tests and provisioning
 # Prerequisites
 To install this Lab, you need to fulfill some requirements.
 
-## Install
+## Requirements
 
-* Azure CLI >= 2.0.70 https://docs.microsoft.com/en-us/cli/azure/?view=azure-cli-latest
-* Terraform >= 0.12.6 https://learn.hashicorp.com/terraform/azure/install_az
+* VirtualBox 5 (6 is not well supported by vagrant yet)
+* Vagrant
+* Azure CLI  https://docs.microsoft.com/en-us/cli/azure/?view=azure-cli-latest
+* Terraform  https://learn.hashicorp.com/terraform/azure/install_az
 * Azure CLI - IOT Extensions (for DPS Enrollment groups)
+
 
 [source,bash]
 ----
@@ -59,11 +62,23 @@ Usually i create a copy of "credentials-template.sh" and name it "credentials-ap
 Then i can add my credentials into "credentials-apply.sh" and execute ```source credentials-apply.sh``` once, before doing anything with terraform.
 That prevents on development systems that the credentials are shown in the bash history and that they are mixed up for different projects because of global environment variables. 
 
-## Create your Playground on Azure
+## Create your Playground
 
-Please check that on plan/apply the database will not be destroyed.
-If so, then you will use all of your in the past collected data.
+The Playground is based on an Azure Cloud Part, the IoT central services and a few Edge Nodes which are running locally on your Virtual Box.
+The local VMs consuming 3 GB of RAM together.
 
+In addition there are certificates required.
+We will generate the Certs based on the scripts given from Microsoft for testing purposes.
+Be aware that this way is not usable for production deployments. See https://github.com/Azure/iotedge/tree/master/tools/CACertificates
+
+Local Edge 1+2 will be connected to the Azure IoT Hub via generated shared Key and Key derivation.
+Edge 3+4 will use the certificates. If you change the Names of Edge 3+4 you need to change also teh certs.
+
+Be aware that these Certs are valid only for 30 days.
+
+You can do an "all in one" start by executing ```run-playground.sh```
+
+## Starting on Azure
 
 [source,bash]
 ----
@@ -71,5 +86,14 @@ terraform init  # download all required modules
 terraform plan  # check credentials and configuration
 terraform apply # install or upgrade solution
 # or - terrafrom apply --auto-approve
+----
+
+## Starting on Virtualbox
+
+Note: The first start can take up to 40 Minutes because multiple GB of Data and installation sources will be downloaded from the Internet.
+
+[source,bash]
+----
+vagrant up
 ----
 
