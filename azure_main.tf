@@ -77,11 +77,17 @@ resource "azurerm_iothub_dps" "dps" {
 
   linked_hub {
     connection_string = data.azurerm_iothub_shared_access_policy.iothubowner.primary_connection_string
-    location            = var.location
+    location          = var.location
   }
 }
 
-
+resource "null_resource" "create-dps-symkey" {
+  provisioner "local-exec" {
+    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"symetric-key-demo\" --edge-enabled true --primary-key ${random_id.primarysecret.hex}  --secondary-key ${random_id.secondarysecret.hex}"
+  }
+  depends_on = [azurerm_iothub_dps.dps]
+}
+#
 # resource "azurerm_iothub_dps_certificate" "example" {
 #   name                = "example"
 #   resource_group_name = azurerm_resource_group.example.name
@@ -94,5 +100,3 @@ resource "azurerm_iothub_dps" "dps" {
 #     content     = "${azurerm_iothub_shared_access_policy.iothubowner.primary_connection_string}"
 #     filename = "${path.module}/output/connectionstring"
 # }
-
-#yamlencode({"foo":[1, 2, 3], "bar": "baz"})

@@ -50,12 +50,28 @@ variable "tagDescription" {
 #   Calculated Variables - please do not change them
 #   ----------------------------------------------------------------------------
 
+# Generate a new ID only when a new prefix is defined
 resource "random_id" "deploymentsuffix" {
     keepers = {
-        # Generate a new ID only when a new prefix is defined
         resource_group = "${var.deploymentprefix}"
     }
     byte_length = 2
+}
+
+# Generate a secret for edge registrations
+# az generates automatic keys, but they are harder to grab as 
+# terraform is currently not supporting enrollments groups
+resource "random_id" "primarysecret" {
+    keepers = {
+        resource_group = "${var.deploymentprefix}"
+    }
+    byte_length = 32
+}
+resource "random_id" "secondarysecret" {
+    keepers = {
+        resource_group = "${var.deploymentprefix}"
+    }
+    byte_length = 32
 }
 
 locals {
