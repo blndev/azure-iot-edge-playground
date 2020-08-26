@@ -9,7 +9,12 @@ To install this Lab, you need to fulfill some requirements.
 
 * Azure CLI >= 2.0.70 https://docs.microsoft.com/en-us/cli/azure/?view=azure-cli-latest
 * Terraform >= 0.12.6 https://learn.hashicorp.com/terraform/azure/install_az
-* Python 3
+* Azure CLI - IOT Extensions (for DPS Enrollment groups)
+
+[source,bash]
+----
+az extension add --name azure-iot
+----
 
 ## Authentication
 
