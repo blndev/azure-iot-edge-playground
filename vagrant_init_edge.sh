@@ -9,5 +9,3 @@ sudo apt-get install moby-engine -y
 sudo apt-get install iotedge -y
 sudo systemctl enable docker iotedge
 # --> registration stuff
-#sudo iotedge check
-#sudo systemctl restart iotedge
