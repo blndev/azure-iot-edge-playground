@@ -1,6 +1,11 @@
 # azure-iot-edge-playground
 Azure IoT Edge - Tests and provisioning
 
+## Open Tasks / TODO
+
+[] Install and Configure Squid and proxy settings on the Edge 2+4
+[] Implement Provisioner Script to get derived application Key
+
 
 # Prerequisites
 To install this Lab, you need to fulfill some requirements.
@@ -78,7 +83,7 @@ Be aware that these Certs are valid only for 30 days.
 
 You can do an "all in one" start by executing ```run-playground.sh```
 
-## Starting on Azure
+### Starting on Azure
 
 [source,bash]
 ----
@@ -88,7 +93,7 @@ terraform apply # install or upgrade solution
 # or - terrafrom apply --auto-approve
 ----
 
-## Starting on Virtualbox
+### Starting on Virtualbox
 
 Note: The first start can take up to 40 Minutes because multiple GB of Data and installation sources will be downloaded from the Internet.
 
@@ -96,4 +101,20 @@ Note: The first start can take up to 40 Minutes because multiple GB of Data and 
 ----
 vagrant up
 ----
+
+
+
+## Notes
+
+### DPS symmetric key provisioning configuration
+provisioning:
+  source: "dps"
+  global_endpoint: "https://global.azure-devices-provisioning.net"
+  scope_id: "0ne0016203B"
+  attestation:
+    method: "symmetric_key"
+    registration_id: "iot-edge-1-reg"
+    #must be a derived key including registration id
+    symmetric_key: "OcNkknqz7z06jkJDHsnnp6aFOBEkYCWepppbtfOKmJw="
+
 
