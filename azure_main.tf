@@ -1,5 +1,14 @@
+#   ----------------------------------------------------------------------------
+#   Author: Daniel Bedarf, Aug 2020
+#   ----------------------------------------------------------------------------
+#   Automated Deployment of Azure IoT Hub and Device Provisioning Services
+#   as a Playground and for testing purposes
+#   
+#   At the end of this file you will see certificate and key generation which 
+#   will be moved at a later point to a own provisioning service as Azure 
+#   function, container or VM. Currently they are here and hard coded
+#   ----------------------------------------------------------------------------
 
-#variable "client_secret" {}
 provider "azurerm" {
     features {}
 }
@@ -21,6 +30,10 @@ resource "azurerm_resource_group" "rg" {
 }
 
 
+#   ----------------------------------------------------------------------------
+#   Create Infrastructure
+#   ----------------------------------------------------------------------------
+
 # Create IoT Hub
 resource "azurerm_iothub" "iothub" {
   name                = "${lower(local.deploymentname)}-iothub"
@@ -34,6 +47,7 @@ resource "azurerm_iothub" "iothub" {
   }
 }
 
+## not longer required, we can use teh build in shared access policy via data object
 # resource  "azurerm_iothub_shared_access_policy" "iothubowner" {
 #   name                = "${lower(local.deploymentname)}-sap-iothubowner"
 #   resource_group_name = azurerm_resource_group.rg.name
@@ -69,6 +83,14 @@ resource "azurerm_iothub_dps" "dps" {
   }
 }
 
+
+# ! *********************************************************
+# ! Azure ARM provider for Terraform doesn’t support managing
+# ! DPS enrollment groups. For now, you’ll need to use the 
+# ! Azure CLI (Aug 2020)
+# ! Thats why it is placed here as local az command
+# ! *********************************************************
+
 # Details: https://docs.microsoft.com/en-us/cli/azure/ext/azure-iot/iot/dps/enrollment-group?view=azure-cli-latest#ext-azure-iot-az-iot-dps-enrollment-group-create
 # Attention: (Aug/2020) requires still the az cli iot edge extensions, see readme - install section
 resource "null_resource" "create-dps-symkey" {
@@ -78,15 +100,41 @@ resource "null_resource" "create-dps-symkey" {
   depends_on = [azurerm_iothub_dps.dps]
 }
 
+
+# ! ----------------------------------------------------------------------------
+# ! This section needs to be moved to a provisioning service
+# ! Hard coded values are fine only for the first version of this POC
+# ! ----------------------------------------------------------------------------
+
 # This will generate a temporary ca and certificates for our Edges
+resource "null_resource" "generate-derived-key-edge-1" {
+  provisioner "local-exec" {
+    command = "bash ./derive-edge-key.sh iot-edge-1 ${random_id.primarysecret.hex}"
+  }
+   triggers = {
+     always_run = "${timestamp()}"
+   }
+}
+resource "null_resource" "generate-derived-key-edge-2" {
+  provisioner "local-exec" {
+    command = "bash ./derive-edge-key.sh iot-edge-2 ${random_id.primarysecret.hex}"
+  }
+   triggers = {
+     always_run = "${timestamp()}"
+   }
+}
+
 resource "null_resource" "generate-certificates" {
   provisioner "local-exec" {
     command = "bash ./generate_certificates.sh"
   }
-  # triggers = {
-  #   always_run = "${timestamp()}"
-  # }
 }
+
+
+#   ----------------------------------------------------------------------------
+#   Snippets to be used later on or never ;)
+#   ----------------------------------------------------------------------------
+
 
 #
 # resource "azurerm_iothub_dps_certificate" "example" {
