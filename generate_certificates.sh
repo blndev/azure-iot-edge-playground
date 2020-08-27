@@ -13,3 +13,5 @@ chmod u+x certGen.sh
 ./certGen.sh create_edge_device_identity_certificate "iot-edge-4"
 ./certGen.sh create_device_certificate "iot-edge-4-primary"
 ./certGen.sh create_device_certificate "iot-edge-4-secondary"
+
+chmod u+w certs/*
