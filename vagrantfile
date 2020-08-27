@@ -38,7 +38,33 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         inline: "
         # --> registration stuff, write /etc/iotedge/config.yaml
         "
-      end
     end
   end
-#end
+
+  gateway_hostname = "iot-edge-gateway"
+  #Central Server and Gateway
+  #this server will issue the certificates later on (act as central Server) and as Proxy/Gateway
+  config.vm.define :"#{gateway_hostname}", primary: true do |gateway_config|
+    gateway_config.vm.provider "virtualbox" do |vb|
+        vb.linked_clone = true
+        vb.memory = "2048"
+        vb.cpus = 1
+        vb.name = "#{gateway_hostname}"
+        #fix ubuntu network issue https://stackoverflow.com/questions/18457306/how-to-enable-internet-access-inside-vagrant
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+        end
+    
+    gateway_config.vm.box = "#{os}"
+    gateway_config.vm.host_name = "#{gateway_hostname}"
+    gateway_config.vm.network "private_network", ip: "#{net_ip}.10"
+
+    gateway_config.vm.synced_folder "gateway_server/squid/", "/srv/squid"
+    gateway_config.vm.synced_folder "gateway_server/provisioner/", "/srv/provisioner"
+
+    gateway_config.vm.provision "shell", inline: "sudo apt update; sudo apt upgrade -y; sudo apt install python3 squid -y;"
+
+  end
+
+#EOF
+end
