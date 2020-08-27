@@ -141,7 +141,7 @@ resource "null_resource" "generate-derived-key-edge-2" {
 }
 resource "null_resource" "generate-derived-reg-edge-2" {
   provisioner "local-exec" {
-    command = "echo ${local.edge2} > .output/iot-edge-1.reg" 
+    command = "echo ${local.edge2} > .output/iot-edge-2.reg" 
   }
   depends_on = [null_resource.generate-output-folder]
 }
