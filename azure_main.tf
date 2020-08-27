@@ -106,22 +106,39 @@ resource "null_resource" "create-dps-symkey" {
 # ! Hard coded values are fine only for the first version of this POC
 # ! ----------------------------------------------------------------------------
 
+resource "null_resource" "generate-output-folder" {
+  provisioner "local-exec" {
+    command = "mkdir .output"
+  }
+}
+
 # This will generate a temporary ca and certificates for our Edges
 resource "null_resource" "generate-derived-key-edge-1" {
   provisioner "local-exec" {
-    command = "bash ./derive-edge-key.sh iot-edge-1 ${random_id.primarysecret.hex}"
+    command = "bash ./derive-edge-key.sh iot-edge-1 ${random_id.primarysecret.hex} > .output/iot-edge-1.key"
   }
-   triggers = {
-     always_run = "${timestamp()}"
-   }
+  depends_on = [null_resource.generate-output-folder]
 }
+
 resource "null_resource" "generate-derived-key-edge-2" {
   provisioner "local-exec" {
-    command = "bash ./derive-edge-key.sh iot-edge-2 ${random_id.primarysecret.hex}"
+    command = "bash ./derive-edge-key.sh iot-edge-2 ${random_id.primarysecret.hex} > .output/iot-edge-2.key" 
   }
-   triggers = {
-     always_run = "${timestamp()}"
-   }
+  depends_on = [null_resource.generate-output-folder]
+}
+
+resource "null_resource" "store-dps-scopeid" {
+  provisioner "local-exec" {
+    command = "echo ${azurerm_iothub_dps.dps.id_scope} > .output/scope_id" 
+  }
+  depends_on = [null_resource.generate-output-folder]
+}
+
+resource "null_resource" "store-dps-primary-key" {
+  provisioner "local-exec" {
+    command = "echo ${random_id.primarysecret.hex} > .output/primary.key" 
+  }
+  depends_on = [null_resource.generate-output-folder]
 }
 
 resource "null_resource" "generate-certificates" {
@@ -130,10 +147,41 @@ resource "null_resource" "generate-certificates" {
   }
 }
 
+output "dps-scope_id" {
+  value       = azurerm_iothub_dps.dps.id_scope
+  description = "The Scope ID for iot-edge registration"
+}
+
+output "Folder_Certificates" {
+  value       = ".certs/certs"
+  description = "Folder of the generated certificates"
+}
+
+output "Folder_IoT-Edge-RegistrationData" {
+  value       = ".output/"
+  description = "Folder for the generated Registration Id"
+}
+
+
+# resource "local_file" "iothub_config_scopeid" {
+#     content     = $azurerm_iothub_dps.dps
+#     filename = "${path.module}/.output/scope_id"
+# }
 
 #   ----------------------------------------------------------------------------
 #   Snippets to be used later on or never ;)
 #   ----------------------------------------------------------------------------
+
+# resource "null_resource" "generate-derived-key-edge-2" {
+#   provisioner "local-exec" {
+#     command = "..." {
+#       value = ""
+#     }"
+#   }
+#    triggers = {
+#      always_run = "${timestamp()}"
+#    }
+# }
 
 
 #
