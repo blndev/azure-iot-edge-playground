@@ -3,12 +3,16 @@ Azure IoT Edge - Tests and provisioning
 
 ## Open Tasks / TODO
 
+[] Apply Certificates also automated for Node 3+4
 [] Install and Configure Squid and proxy settings on the Edge 2+4
 [] Implement Provisioner Script to get derived application Key
 
 
 # Prerequisites
 To install this Lab, you need to fulfill some requirements.
+
+*This Repo was developed to be used on a Ubuntu 18.04 LTS*
+It should work also on other linux systems, but because of Paths i guess not under Windows.
 
 ## Requirements
 
