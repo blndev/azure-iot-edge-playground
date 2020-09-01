@@ -78,12 +78,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       edge_vm.vm.provision "file", source: ".output/", destination:  "$HOME/config/iotedge"
       edge_vm.vm.provision "file", source: ".certs/certs/", destination:  "$HOME/config/certs"
       edge_vm.vm.provision "file", source: "#{registerscript}", destination:  "$HOME/register_iotedge.py"
-      # Install virtual TPM
-      edge_vm.vm.provision "shell", inline: "
-      
-      
-      "
-      edge_vm.vm.provision "shell", path: "vagrant_init_edge.sh"
+
+      # Only for TPM
+      edge_vm.vm.provision "shell", path: "vagrant_init_vtpm2.sh"
+
+      # Continue for all Edges
+      #edge_vm.vm.provision "shell", path: "vagrant_init_edge.sh"
 
       edge_vm.vm.provision "shell", inline: "sudo python3 register_iotedge.py"
       edge_vm.vm.provision "shell", inline: "sudo systemctl restart iotedge; sudo iotedge check;sudo systemctl status iotedge"
