@@ -6,12 +6,12 @@ cd .certs
 chmod u+x certGen.sh
 ./certGen.sh create_root_and_intermediate
 
-./certGen.sh create_edge_device_identity_certificate "iot-edge-3"
-./certGen.sh create_device_certificate "iot-edge-3-primary"
-./certGen.sh create_device_certificate "iot-edge-3-secondary"
+# ./certGen.sh create_edge_device_identity_certificate "iot-edge-cert1"
+# ./certGen.sh create_device_certificate "iot-edge-cert1-primary"
+# ./certGen.sh create_device_certificate "iot-edge-cert1-secondary"
 
-./certGen.sh create_edge_device_identity_certificate "iot-edge-4"
-./certGen.sh create_device_certificate "iot-edge-4-primary"
-./certGen.sh create_device_certificate "iot-edge-4-secondary"
+# ./certGen.sh create_edge_device_identity_certificate "iot-edge-cert2"
+# ./certGen.sh create_device_certificate "iot-edge-cert2-primary"
+# ./certGen.sh create_device_certificate "iot-edge-cert2-secondary"
 
 chmod u+w certs/*

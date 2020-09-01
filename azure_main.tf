@@ -13,6 +13,9 @@ provider "azurerm" {
     features {}
 }
 
+terraform {
+  required_version = ">= 0.12"
+}
 
 #   ----------------------------------------------------------------------------
 #   Developer Information
@@ -112,44 +115,62 @@ resource "null_resource" "generate-output-folder" {
   }
 }
 
-# This will generate a temporary ca and certificates for our Edges
+# This will generate a temporary CA and certificates for our Edges
+resource "null_resource" "generate-root-certificates" {
+  provisioner "local-exec" {
+    command = "bash ./generate_certificates.sh"
+  }
+}
+
+# This defines our Edges and is used to generate Registrations Keys and Certificates
+# !Attention: this names must fit to teh VM names in the vagrant - file
 locals {
-  edge1="iot-edge-key1" 
-  edge2="iot-edge-key2" 
+  edges=[
+    "iot-edge-key1",
+    "iot-edge-key2",
+    "iot-edge-cert1",
+    "iot-edge-cert2",
+    "iot-edge-tpm1",
+    "iot-edge-tpm2"
+  ]
+  edge1="cv"
+  edge2="hh"
 }
 
-# Edge 1 - Registration ID
-resource "null_resource" "generate-derived-reg-edge-1" {
+resource "null_resource" "generate-derived-reg-ids" {
+  for_each = toset(local.edges)
   provisioner "local-exec" {
-    command = "echo ${local.edge1} > .output/${local.edge1}.reg" 
-  }
+      command = "echo ${each.key} > .output/${each.key}.reg" 
+    }
   depends_on = [null_resource.generate-output-folder]
 }
 
-# Edge 1 - derived Key
-resource "null_resource" "generate-derived-key-edge-1" {
+resource "null_resource" "generate-derived-reg-keys" {
+  for_each = toset(local.edges)
   provisioner "local-exec" {
-    command = "bash ./generate_edge-derive-key.sh ${local.edge1} ${random_id.primarysecret.hex} > .output/${local.edge1}.key"
-  }
+    command = "bash ./generate_edge-derive-key.sh ${each.key} ${random_id.primarysecret.hex} > .output/${each.key}.key"
+    }
   depends_on = [null_resource.generate-output-folder]
 }
 
-# Edge 2 - Registration ID
-resource "null_resource" "generate-derived-reg-edge-2" {
+resource "null_resource" "generate-edge_device_identity_certificate" {
+  for_each = toset(local.edges)
   provisioner "local-exec" {
-    command = "echo ${local.edge2} > .output/${local.edge2}.reg" 
-  }
-  depends_on = [null_resource.generate-output-folder]
+    command = "bash ./.certs/certGen.sh create_edge_device_identity_certificate ${each.key}"
+    }
+  depends_on = [null_resource.generate-root-certificates]
 }
 
-# Edge 2 - derived Key
-resource "null_resource" "generate-derived-key-edge-2" {
+resource "null_resource" "generate-edge-device_certificate" {
+  for_each = toset(local.edges)
   provisioner "local-exec" {
-    command = "bash ./generate_edge-derive-key.sh ${local.edge2} ${random_id.primarysecret.hex} > .output/${local.edge2}.key"
-  }
-  depends_on = [null_resource.generate-output-folder]
+    command = "bash ./.certs/certGen.sh create_device_certificate ${each.key}-primary"
+    }
+  depends_on = [null_resource.generate-root-certificates, null_resource.generate-edge_device_identity_certificate]
+  triggers = {
+     always_run = "${timestamp()}"
+   }
 }
-
 
 # General
 resource "null_resource" "store-dps-scopeid" {
@@ -164,12 +185,6 @@ resource "null_resource" "store-dps-primary-key" {
     command = "echo ${random_id.primarysecret.hex} > .output/primary.key" 
   }
   depends_on = [null_resource.generate-output-folder]
-}
-
-resource "null_resource" "generate-certificates" {
-  provisioner "local-exec" {
-    command = "bash ./generate_certificates.sh"
-  }
 }
 
 output "dps-scope_id" {
