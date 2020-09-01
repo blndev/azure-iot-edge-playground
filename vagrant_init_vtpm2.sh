@@ -20,4 +20,5 @@ cmake -Duse_prov_client:BOOL=ON ..
 cmake --build .
 cd provisioning_client/tools/tpm_device_provision
 make
-./tpm_device_provision
+#step is not possible to automate because it's waiting for "any key"
+#./tpm_device_provision
