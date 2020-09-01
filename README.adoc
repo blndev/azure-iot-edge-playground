@@ -1,12 +1,26 @@
-# azure-iot-edge-playground
-Azure IoT Edge - Tests and provisioning
+:imagesdir: assets
+
+# Azure-IoT-Edge Playground
+
+For Azure IoT Edge - provisioning tests
 
 Architecture:
-image::assets/architecture.png[Architecture]
+image:architecture.png[Architecture]
 
-## Open Tasks / TODO
+## Tasks / Plans
 
-[] Install and Configure Squid and proxy settings on the Edge 2+4
+* [x] Azure Deployment 
+* [x] Vagarant Setup
+* [x] create shared keys
+* [x] register with shared key
+* [x] create certificates
+* [ ] register with certificate (partly done)
+* [x] install TPM dependencies
+* [ ] register with TPM (not possible because of interactive tools)
+* [ ] Create Metadata Service
+* [ ] Install and Configure Squid and proxy settings for Gateway
+* [ ] Vagrant optimization by Provision 1 VM and clone then
+* [ ] Vagrant using KVM instead of Virtual Box
 
 
 # Prerequisites
