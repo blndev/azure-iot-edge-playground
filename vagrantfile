@@ -77,6 +77,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       #based on https://docs.microsoft.com/de-de/azure/iot-edge/how-to-install-iot-edge-linux
       edge_vm.vm.provision "file", source: ".output/", destination:  "$HOME/config/iotedge"
       edge_vm.vm.provision "file", source: ".certs/certs/", destination:  "$HOME/config/certs"
+      #fix because some certs are read only which prevents reprovisioning
+        edge_vm.vm.provision "shell", inline: "chmod 777 /home/vagrant/config/certs/*"
+      #end fix
       edge_vm.vm.provision "file", source: "#{registerscript}", destination:  "$HOME/register_iotedge.py"
 
       edge_vm.vm.provision "shell", inline: "sudo apt update; sudo apt upgrade -y"
