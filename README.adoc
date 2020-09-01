@@ -1,11 +1,12 @@
 # azure-iot-edge-playground
 Azure IoT Edge - Tests and provisioning
 
+Architecture:
+image::assets/architecture.png[Architecture]
+
 ## Open Tasks / TODO
 
-[] Apply Certificates also automated for Node 3+4
 [] Install and Configure Squid and proxy settings on the Edge 2+4
-[] Implement Provisioner Script to get derived application Key
 
 
 # Prerequisites

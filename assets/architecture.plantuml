@@ -1,0 +1,39 @@
+@startuml
+
+title Architecture
+
+class "Azure\nIoT Hub" as iot << (I,azure) >> {
+  +Digital Twins
+  +Deploymnents
+  +Data Routing
+  +Device Registration
+}
+
+class "Azure\nDevice Provisioning Service" as dps  << (D,azure) >> {
+  +Register via preshared Key
+  +Regsiter via Certificate
+  +Register via TPM
+}
+
+class "Edge Key 1" as e1 << (E,orchid) >>
+class "Edge Key 2" as e2 << (E,orchid) >>
+class "Edge Cert 1" as e3 << (E,yellow) >>
+class "Edge Cert 2" as e4 << (E,yellow) >>
+class "Edge TPM 1" as e5 << (E,lightgreen) >>
+class "Edge TPM 2" as e6 << (E,lightgreen) >>
+
+dps <|-- e1: "use Key"
+dps <|-- e2: "use Key"
+dps <|-- e3: "use Cert"
+dps <|-- e4: "use Cert"
+dps <|--  e5: "use TPM"
+dps <|--  e6: "use TPM"
+
+iot <|-- dps: "register devices"
+iot <|-- e1: workload
+iot <|-- e2: workload
+iot <|-- e3: workload
+iot <|-- e4: workload
+iot <|-- e5: workload
+iot <|-- e6: workload
+@enduml
