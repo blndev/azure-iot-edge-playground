@@ -114,37 +114,42 @@ resource "null_resource" "generate-output-folder" {
 
 # This will generate a temporary ca and certificates for our Edges
 locals {
-  edge1="iot-edge-1" 
-  edge2="iot-edge-1" 
+  edge1="iot-edge-key1" 
+  edge2="iot-edge-key2" 
 }
 
-# Edge 1
-resource "null_resource" "generate-derived-key-edge-1" {
-  provisioner "local-exec" {
-    command = "bash ./derive-edge-key.sh ${local.edge1} ${random_id.primarysecret.hex} > .output/iot-edge-1.key"
-  }
-  depends_on = [null_resource.generate-output-folder]
-}
+# Edge 1 - Registration ID
 resource "null_resource" "generate-derived-reg-edge-1" {
   provisioner "local-exec" {
-    command = "echo ${local.edge1} > .output/iot-edge-1.reg" 
+    command = "echo ${local.edge1} > .output/${local.edge1}.reg" 
   }
   depends_on = [null_resource.generate-output-folder]
 }
 
-# Edge 2
-resource "null_resource" "generate-derived-key-edge-2" {
+# Edge 1 - derived Key
+resource "null_resource" "generate-derived-key-edge-1" {
   provisioner "local-exec" {
-    command = "bash ./derive-edge-key.sh ${local.edge2} ${random_id.primarysecret.hex} > .output/iot-edge-2.key" 
+    command = "bash ./generate_edge-derive-key.sh ${local.edge1} ${random_id.primarysecret.hex} > .output/${local.edge1}.key"
   }
   depends_on = [null_resource.generate-output-folder]
 }
+
+# Edge 2 - Registration ID
 resource "null_resource" "generate-derived-reg-edge-2" {
   provisioner "local-exec" {
-    command = "echo ${local.edge2} > .output/iot-edge-2.reg" 
+    command = "echo ${local.edge2} > .output/${local.edge2}.reg" 
   }
   depends_on = [null_resource.generate-output-folder]
 }
+
+# Edge 2 - derived Key
+resource "null_resource" "generate-derived-key-edge-2" {
+  provisioner "local-exec" {
+    command = "bash ./generate_edge-derive-key.sh ${local.edge2} ${random_id.primarysecret.hex} > .output/${local.edge2}.key"
+  }
+  depends_on = [null_resource.generate-output-folder]
+}
+
 
 # General
 resource "null_resource" "store-dps-scopeid" {
