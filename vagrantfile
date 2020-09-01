@@ -85,7 +85,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       edge_vm.vm.provision "shell", path: "vagrant_init_vtpm2.sh"
 
       # Continue for all Edges
-      #edge_vm.vm.provision "shell", path: "vagrant_init_edge.sh"
+      edge_vm.vm.provision "shell", path: "vagrant_init_edge.sh"
 
       edge_vm.vm.provision "shell", inline: "sudo python3 register_iotedge.py"
       edge_vm.vm.provision "shell", inline: "sudo systemctl restart iotedge; sudo iotedge check;sudo systemctl status iotedge"
