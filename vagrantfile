@@ -79,6 +79,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       edge_vm.vm.provision "file", source: ".certs/certs/", destination:  "$HOME/config/certs"
       edge_vm.vm.provision "file", source: "#{registerscript}", destination:  "$HOME/register_iotedge.py"
 
+      edge_vm.vm.provision "shell", inline: "sudo apt update; sudo apt upgrade -y"
+
       # Only for TPM
       edge_vm.vm.provision "shell", path: "vagrant_init_vtpm2.sh"
 
