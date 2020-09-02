@@ -8,47 +8,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   os = "bento/ubuntu-18.04"
   net_ip = "192.168.50"
 
-  # import the box once and then create references for all other instaces
-  #config.linked_clone = true
-
-  # [
-  #   ["iot-edge-1",  "#{net_ip}.11", "512", os ],
-  #   ["iot-edge-2", "#{net_ip}.12", "512", os ],
-  #   ["iot-edge-3", "#{net_ip}.13", "512", os ],
-  #   ["iot-edge-4", "#{net_ip}.14", "512", os ],
-  # ].each do |vmname,ip,mem,os|
-  #   config.vm.define "#{vmname}" do |edge_vm|
-  #     edge_vm.vm.provider "virtualbox" do |vb|
-  #         vb.linked_clone = true
-  #         vb.memory = "#{mem}"
-  #         vb.cpus = 1
-  #         vb.name = "#{vmname}"
-  #         #fix ubuntu network issue https://stackoverflow.com/questions/18457306/how-to-enable-internet-access-inside-vagrant
-  #         vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-  #         vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]    
-  #         vb.customize ["modifyvm", :id, "--groups", "/IOT-Edge-PoC"]      
-  #     end
-
-  #     edge_vm.vm.box = "#{os}"
-  #     edge_vm.vm.hostname = "#{vmname}"
-  #     #private network for metadata service
-  #     edge_vm.vm.network "private_network", ip: "#{ip}"
-
-  #     #based on https://docs.microsoft.com/de-de/azure/iot-edge/how-to-install-iot-edge-linux
-  #     edge_vm.vm.provision "file", source: ".output/", destination:  "$HOME/config/iotedge"
-  #     edge_vm.vm.provision "file", source: ".certs/certs/", destination:  "$HOME/config/certs"
-  #     edge_vm.vm.provision "file", source: "configure_iotedge_symkey.py", destination:  "$HOME/register_iotedge.py"
-
-  #     edge_vm.vm.provision "shell", path: "vagrant_init_edge.sh"
-
-  #     edge_vm.vm.provision "shell", inline: "sudo python3 register_iotedge.py"
-  #     edge_vm.vm.provision "shell", inline: "sudo systemctl restart iotedge; sudo iotedge check;sudo systemctl status iotedge"
-
-  #     # route to metadata service
-  #     edge_vm.vm.provision "shell", inline: "sudo route add -host 169.254.169.254 gw #{net_ip}.10"
-  #   end
-  # end
-
   [
     ["iot-edge-key1", "#{net_ip}.21", "512", os , "configure_iotedge_symkey.py"],
     ["iot-edge-key2", "#{net_ip}.22", "512", os , "configure_iotedge_symkey.py"],
