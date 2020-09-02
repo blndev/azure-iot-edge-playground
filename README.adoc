@@ -7,6 +7,8 @@ For Azure IoT Edge - provisioning tests
 Architecture:
 image:architecture.png[Architecture]
 
+Each Edge cpontains valid provisioning Keys, Certificates and a fresh build Azure IoT SDK.
+
 ## Tasks / Plans
 
 * [x] Azure Deployment 
@@ -14,7 +16,7 @@ image:architecture.png[Architecture]
 * [x] create shared keys
 * [x] register with shared key
 * [x] create certificates
-* [ ] register with certificate (partly done)
+* [x] register with certificate
 * [x] install TPM dependencies
 * [ ] register with TPM (not possible because of interactive tools)
 * [ ] Create Metadata Service

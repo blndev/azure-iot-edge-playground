@@ -10,7 +10,7 @@
 # load environment variables to build the playground
 source credentials-apply.sh
 # create cloud resources
-terraform apply --auto-approve
+terraform apply --auto-approve --parallelism=1
 
 # ! *********************************************************
 # ! Azure ARM provider for Terraform doesn’t support managing
@@ -19,13 +19,10 @@ terraform apply --auto-approve
 # ! This is done in Terraform as well
 # ! *********************************************************
 
-vagrant up
+vagrant up iot-edge-key1
+vagrant up iot-edge-cert1
 
-#create enrollment group with x509 certificate
-#az iot dps enrollment-group create -g {resource_group_name} --dps-name {dps_name} --enrollment-id {enrollment_id} --primary-key {primary_key} --secondary-key {secondary_key}
-#vagrant up iot-edge-3 iot-edge-4
-
-
+# or vagrant up for all devices
 
 ### Stop playground and remove all ressources
 # vagrant destroy
