@@ -96,13 +96,27 @@ resource "azurerm_iothub_dps" "dps" {
 
 # Details: https://docs.microsoft.com/en-us/cli/azure/ext/azure-iot/iot/dps/enrollment-group?view=azure-cli-latest#ext-azure-iot-az-iot-dps-enrollment-group-create
 # Attention: (Aug/2020) requires still the az cli iot edge extensions, see readme - install section
-resource "null_resource" "create-dps-symkey" {
+resource "null_resource" "create-dps-symkey-enrollement" {
   provisioner "local-exec" {
-    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"symetric-key-demo\" --edge-enabled true --primary-key ${random_id.primarysecret.hex}  --secondary-key ${random_id.secondarysecret.hex}"
+    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"symetric-enrollement-1\" --edge-enabled true --primary-key ${random_id.primarysecret.hex}  --secondary-key ${random_id.secondarysecret.hex}"
   }
   depends_on = [azurerm_iothub_dps.dps]
 }
 
+resource "null_resource" "create-dps-certificate-enrollement" {
+  provisioner "local-exec" {
+    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"certificate-enrollement-1\" --edge-enabled true  --certificate-path ${path.module}/.certs/certs/azure-iot-test-only.root.ca.cert.pem"
+  }
+  depends_on = [azurerm_iothub_dps.dps]
+}
+
+# resource "azurerm_iothub_dps_certificate" "example" {
+#   name                = "example"
+#   resource_group_name = azurerm_resource_group.example.name
+#   iot_dps_name        = azurerm_iothub_dps.example.name
+
+#   certificate_content = filebase64("example.cer")
+# }
 
 #   ----------------------------------------------------------------------------
 #   Snippets to be used later on or never ;)
