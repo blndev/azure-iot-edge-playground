@@ -106,10 +106,11 @@ You can do an "all in one" start by executing ```run-playground.sh```
 
 [source,bash]
 ----
+source credentials-apply.sh
 terraform init  # download all required modules
 terraform plan  # check credentials and configuration
-terraform apply # install or upgrade solution
-# or - terrafrom apply --auto-approve
+terraform apply --parallelism=1 # install or upgrade solution
+# or - terrafrom apply --auto-approve --parallelism=1
 ----
 
 ### Starting on Virtualbox
