@@ -37,6 +37,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       edge_vm.vm.provision "file", source: ".output/", destination:  "$HOME/config/iotedge"
       edge_vm.vm.provision "file", source: ".certs/certs/", destination:  "$HOME/config/certs"
       edge_vm.vm.provision "file", source: ".certs/private/", destination:  "$HOME/config/certs"
+      edge_vm.vm.provision "shell", inline: "cp /home/vagrant/config/certs/*#{vmname}* /etc/iotedge/"
       #fix because some certs are read only which prevents reprovisioning
         edge_vm.vm.provision "shell", inline: "chmod 777 /home/vagrant/config/certs/*"
       #end fix

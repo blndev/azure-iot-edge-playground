@@ -8,7 +8,6 @@ edge_name=socket.gethostname()
 
 from shutil import copyfile
 copyfile('/etc/iotedge/config.yaml', '/etc/iotedge/config.yaml.org')
-copyfile('./config/certs/*'+edge_name+'*', '/etc/iotedge/')
 
 with open('/etc/iotedge/config.yaml') as f:
     data = yaml.load(f)
