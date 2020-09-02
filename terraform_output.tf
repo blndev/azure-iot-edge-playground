@@ -63,9 +63,9 @@ resource "null_resource" "generate-edge-device_certificate" {
     command = "bash ./.certs/certGen.sh create_device_certificate ${each.key}-primary"
     }
   depends_on = [null_resource.generate-root-certificates, null_resource.generate-edge_device_identity_certificate]
-  triggers = {
-     always_run = "${timestamp()}"
-   }
+  # triggers = {
+  #    always_run = "${timestamp()}"
+  #  }
 }
 
 # General
