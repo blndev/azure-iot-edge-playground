@@ -14,10 +14,10 @@ with open('/etc/iotedge/config.yaml') as f:
 with open('./config/iotedge/scope_id') as fsid:
     sid=fsid.read().replace('\n', '')
 
+data['provisioning']={}
 data['provisioning']['source']='dps'
 data['provisioning']['scope_id']=sid
 data['provisioning']['global_endpoint']='https://global.azure-devices-provisioning.net'
-data['provisioning']['device_connection_string']=''
 data['provisioning']['attestation']={}
 data['provisioning']['attestation']['method'] = 'x509'
 #data['provisioning']['attestation']['registration_id'] = reg
