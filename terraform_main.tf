@@ -98,7 +98,7 @@ resource "azurerm_iothub_dps" "dps" {
 # Attention: (Aug/2020) requires still the az cli iot edge extensions, see readme - install section
 resource "null_resource" "create-dps-symkey-enrollement" {
   provisioner "local-exec" {
-    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"symetric-enrollement-1\" --edge-enabled true  --initial-twin-tags \"{'location':{'region':'EU/Slovakia'}}\"  --primary-key ${random_id.primarysecret.hex}  --secondary-key ${random_id.secondarysecret.hex}"
+    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"symmetric-enrollement-1\" --edge-enabled true  --initial-twin-tags \"{'location':{'region':'EU/Slovakia'}}\"  --primary-key ${random_id.primarysecret.hex}  --secondary-key ${random_id.secondarysecret.hex}"
   }
   depends_on = [azurerm_iothub_dps.dps]
 }
@@ -113,7 +113,7 @@ resource "null_resource" "create-dps-upload-certificate" {
 
 
 
-resource "null_resource" "create-dps-certificate-enrollement-with-ca" {
+resource "null_resource" "create-dps-certificate-enrollement" {
   provisioner "local-exec" {
     command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"certificate-enrollement-1\" --edge-enabled true --initial-twin-tags \"{'location':{'region':'EU/Germany'}}\" --ca-name \"root_ca\""
   }
