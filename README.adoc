@@ -7,7 +7,8 @@ For Azure IoT Edge - provisioning tests
 Architecture:
 image:architecture.png[Architecture]
 
-Each Edge cpontains valid provisioning Keys, Certificates and a fresh build Azure IoT SDK.
+Each Edge contains valid provisioning Keys, Certificates and a the TPM Edges also a fresh build of Azure IoT SDK.
+
 
 ## Tasks / Plans
 
@@ -23,6 +24,26 @@ Each Edge cpontains valid provisioning Keys, Certificates and a fresh build Azur
 * [ ] Install and Configure Squid and proxy settings for Gateway
 * [ ] Vagrant optimization by Provision 1 VM and clone then
 * [ ] Vagrant using KVM instead of Virtual Box
+
+
+## Known Issues
+
+
+### 1 - DPS registration failed because the DPS operation is not assigned
+Sometimes the provisioning don't work with the following error:
+----
+[WARN] - Could not provision device
+[WARN] - 	caused by: DPS registration failed because the DPS operation is not assigned
+[ERR!] - The daemon could not start up successfully: Could not initialize DPS provisioning client
+[ERR!] - 	caused by: Could not restore previous provisioning result
+[ERR!] - 	caused by: No such file or directory (os error 2)
+----
+
+Then you have to unlock the IoTHub from DPS and register at again via the Azure Portal
+
+### 2 - Authentication failed
+Mostly then the root certificate needs to be validated with a dedicated certificate
+
 
 
 # Prerequisites
