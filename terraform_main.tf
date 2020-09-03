@@ -66,6 +66,7 @@ data "azurerm_iothub_shared_access_policy" "iothubowner" {
   name                = "iothubowner"
   resource_group_name = azurerm_resource_group.rg.name
   iothub_name         = azurerm_iothub.iothub.name
+  depends_on = [azurerm_iothub.iothub]
 }
 
 # Create Device Provisioning Service
