@@ -120,14 +120,6 @@ resource "null_resource" "create-dps-certificate-enrollement" {
   depends_on = [null_resource.create-dps-upload-certificate]
 }
 
-# resource "azurerm_iothub_dps_certificate" "example" {
-#   name                = "example"
-#   resource_group_name = azurerm_resource_group.example.name
-#   iot_dps_name        = azurerm_iothub_dps.example.name
-
-#   certificate_content = filebase64("example.cer")
-# }
-
 #   ----------------------------------------------------------------------------
 #   Snippets to be used later on or never ;)
 #   ----------------------------------------------------------------------------
@@ -141,19 +133,4 @@ resource "null_resource" "create-dps-certificate-enrollement" {
 #    triggers = {
 #      always_run = "${timestamp()}"
 #    }
-# }
-
-
-#
-# resource "azurerm_iothub_dps_certificate" "example" {
-#   name                = "example"
-#   resource_group_name = azurerm_resource_group.example.name
-#   iot_dps_name        = azurerm_iothub_dps.example.name
-
-#   certificate_content = filebase64("example.cer")
-# }
-
-# resource "local_file" "iothub_connectionstring" {
-#     content     = "${azurerm_iothub_shared_access_policy.iothubowner.primary_connection_string}"
-#     filename = "${path.module}/output/connectionstring"
 # }
