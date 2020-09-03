@@ -98,16 +98,26 @@ resource "azurerm_iothub_dps" "dps" {
 # Attention: (Aug/2020) requires still the az cli iot edge extensions, see readme - install section
 resource "null_resource" "create-dps-symkey-enrollement" {
   provisioner "local-exec" {
-    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"symetric-enrollement-1\" --edge-enabled true --primary-key ${random_id.primarysecret.hex}  --secondary-key ${random_id.secondarysecret.hex}"
+    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"symetric-enrollement-1\" --edge-enabled true  --initial-twin-tags \"{'location':{'region':'EU/Slovakia'}}\"  --primary-key ${random_id.primarysecret.hex}  --secondary-key ${random_id.secondarysecret.hex}"
   }
   depends_on = [azurerm_iothub_dps.dps]
 }
 
-resource "null_resource" "create-dps-certificate-enrollement" {
+
+resource "null_resource" "create-dps-upload-certificate" {
   provisioner "local-exec" {
-    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"certificate-enrollement-1\" --edge-enabled true  --certificate-path ${path.module}/.certs/certs/azure-iot-test-only.root.ca.cert.pem"
+    command = "az iot dps certificate create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --name \"root_ca\" --path ${path.module}/.certs/certs/azure-iot-test-only.root.ca.cert.pem"
   }
-  depends_on = [azurerm_iothub_dps.dps]
+  depends_on = [azurerm_iothub_dps.dps, null_resource.generate-root-certificates]
+}
+
+
+
+resource "null_resource" "create-dps-certificate-enrollement-with-ca" {
+  provisioner "local-exec" {
+    command = "az iot dps enrollment-group create -g ${azurerm_resource_group.rg.name} --dps-name ${azurerm_iothub_dps.dps.name} --enrollment-id \"certificate-enrollement-1\" --edge-enabled true --initial-twin-tags \"{'location':{'region':'EU/Germany'}}\" --ca-name \"root_ca\""
+  }
+  depends_on = [null_resource.create-dps-upload-certificate]
 }
 
 # resource "azurerm_iothub_dps_certificate" "example" {
