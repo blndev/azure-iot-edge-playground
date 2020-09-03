@@ -44,8 +44,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       edge_vm.vm.provision "shell", inline: "sudo apt update; sudo apt upgrade -y"
 
-      # Only for TPM, !!! --> commented out to save time and isntallation ressources
-      #edge_vm.vm.provision "shell", path: "vagrant_init_vtpm2.sh"
+      # Only for TPM, !!! --> this whill install development tools and build the whole IoT SDK
+      if registerscript.include? "tpm"
+        edge_vm.vm.provision "shell", path: "vagrant_init_vtpm2.sh"
+      end
 
       # Continue for all Edges
       edge_vm.vm.provision "shell", path: "vagrant_init_edge.sh"
