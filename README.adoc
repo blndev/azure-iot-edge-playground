@@ -161,6 +161,13 @@ provisioning:
     identity_pk: "file:///etc/iotedge/iot-edge-device-identity-iot-edge-cert1.key.pem"
 ----
 
+Device verification certificate 
+-----
+ ./certGen.sh create_verification_certificate B730D538fgdgdfgdfgfd8F5A90D10D0EC5F403B92CF1820
+-----
+Output: iot-device-verification-code-full-chain.cert.pem
+Needs to be uploaded to Azure.
+
 ## Things to think about
 Maybe there is an option to use Environment Varbiables instead of modify the config file ..
 
